@@ -1,0 +1,31 @@
+#!/bin/sh
+
+
+CONF_FILE="/etc/sofin.conf.sh"
+if [ -e "${CONF_FILE}" ]; then
+    . "${CONF_FILE}"
+    validate_env
+else
+    echo "FATAL: No configuration file found: ${CONF_FILE}"
+    exit 1
+fi
+
+# NOTE: databaseName = serviceName + "_" + stage;
+export stage="staging" # default
+export serviceName="$(${BASENAME_BIN} $(pwd))" # bin/build is invoked from service root directory
+test "${1}" != "" && export stage="${1}" # set custom stage if param with stage given
+export databaseName="${serviceName}_${stage}"
+export default_init_sql_file="db/init.sql"
+
+
+loadInit () {
+    note "Database created."
+    note "Will be created and filled from db/init.sql (if exists)"
+    test -f "${default_init_sql_file}" && mysql --socket=${HOME}/SoftwareData/Mysql/service.sock ${databaseName} < "${default_init_sql_file}" && note "Database init complete!" && return
+    error "No database SQL init file found!"
+}
+
+note "Invoking bin/build for service: ${serviceName} on stage: ${stage}"
+note "Checking existance of app's database: ${databaseName}"
+test $(mysql --socket=${HOME}/SoftwareData/Mysql/service.sock --execute=\"create database ${databaseName};\") && loadInit
+note "Finished bin/build"
