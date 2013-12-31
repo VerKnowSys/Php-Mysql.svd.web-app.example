@@ -25,7 +25,7 @@ export default_init_sql_file="db/init.sql"
 loadInit () {
     note "Database created: ${databaseName}"
     note "Will be created and filled from db/init.sql (if exists)"
-    test -f "${default_init_sql_file}" && mysql --socket=${HOME}/SoftwareData/Mysql/service.sock ${databaseName} -f "${default_init_sql_file}" && note "Database init complete!" && exit 0
+    test -f "${default_init_sql_file}" && mysql --socket=${HOME}/SoftwareData/Mysql/service.sock ${databaseName} < "${default_init_sql_file}" && note "Database init complete!" && exit 0
     error "No database SQL init file found!"
 }
 
