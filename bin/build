@@ -11,8 +11,12 @@ else
 fi
 
 # NOTE: databaseName = serviceName + "_" + stage;
-export stage="staging" # default
-export serviceName="$(${BASENAME_BIN} $(pwd))" # bin/build is invoked from service root directory
+cwd="$(pwd)"
+cd ../../
+export serviceName="$(${BASENAME_BIN} $(pwd))" # bin/build is invoked from latest web-app release directory
+cd "${cwd}"
+
+export stage="staging" # default stage
 test "${1}" != "" && export stage="${1}" # set custom stage if param with stage given
 export databaseName="${serviceName}_${stage}"
 export default_init_sql_file="db/init.sql"
