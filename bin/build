@@ -31,5 +31,5 @@ loadInit () {
 
 note "Invoking bin/build for service: ${serviceName} on stage: ${stage}"
 note "Checking existance of app's database: ${databaseName}"
-test $(mysql --socket=${HOME}/SoftwareData/Mysql/service.sock --execute="create database ${databaseName};") && loadInit
+mysql --socket=${HOME}/SoftwareData/Mysql/service.sock --execute="create database ${databaseName};" && loadInit
 note "Finished bin/build"
