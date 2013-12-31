@@ -25,11 +25,11 @@ export default_init_sql_file="db/init.sql"
 loadInit () {
     note "Database created."
     note "Will be created and filled from db/init.sql (if exists)"
-    test -f "${default_init_sql_file}" && mysql --socket=${HOME}/SoftwareData/Mysql/service.sock ${databaseName} < "${default_init_sql_file}" && note "Database init complete!" && return
+    test -f "${default_init_sql_file}" && mysql --socket=${HOME}/SoftwareData/Mysql/service.sock ${databaseName} -f "${default_init_sql_file}" && note "Database init complete!" && exit 0
     error "No database SQL init file found!"
 }
 
 note "Invoking bin/build for service: ${serviceName} on stage: ${stage}"
 note "Checking existance of app's database: ${databaseName}"
-test $(mysql --socket=${HOME}/SoftwareData/Mysql/service.sock --execute=\"create database ${databaseName};\") && loadInit
+test $(mysql --socket=${HOME}/SoftwareData/Mysql/service.sock --execute="create database ${databaseName};") && loadInit
 note "Finished bin/build"
