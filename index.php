@@ -8,6 +8,7 @@ try {
   chdir($curr_dir); # go back to app root dir
   $stage = "staging";
 
+  echo "Connecting to: mysql:socket=localhost:~/SoftwareData/Mysql/service.sock;dbname=".$serviceName."_".$stage."<br/>";
   $dbh = new PDO('mysql:socket=localhost:~/SoftwareData/Mysql/service.sock;dbname='.$serviceName."_".$stage,
     '', ''
   );
