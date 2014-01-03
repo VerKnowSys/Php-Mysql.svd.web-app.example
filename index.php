@@ -6,7 +6,7 @@ try {
   # NOTE: from global definitions: databaseName = serviceName + "_" + stage;
   $serviceName = basename(getcwd()); # gather name of directory which is also service name
   chdir($curr_dir); # go back to app root dir
-  $stage = "staging";
+  $stage = getenv("PHP_ENV");
 
   echo "Connecting to: mysql:socket=localhost:~/SoftwareData/Mysql/service.sock;dbname=".$serviceName."_".$stage."<br/>";
   $dbh = new PDO('mysql:socket=localhost:~/SoftwareData/Mysql/service.sock;dbname='.$serviceName."_".$stage,
