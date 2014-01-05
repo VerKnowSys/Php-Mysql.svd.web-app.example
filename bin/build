@@ -24,8 +24,7 @@ export default_init_sql_file="db/init.sql"
 
 
 loadInit () {
-    while true; do
-        test -f ${database_socket_file} && break
+    while test ! -S ${database_socket_file}; do
         note "Waiting for database socket file to show up.."
         sleep 1
     done
