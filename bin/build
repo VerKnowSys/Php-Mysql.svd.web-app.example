@@ -16,6 +16,7 @@ cd ../../
 export serviceName="$(${BASENAME_BIN} $(pwd))" # bin/build is invoked from latest web-app release directory
 cd "${cwd}"
 
+export database_socket_file="${HOME}/SoftwareData/Mysql/service.sock"
 export stage="staging" # default stage
 test "${1}" != "" && export stage="${1}" # set custom stage if param with stage given
 export databaseName="${serviceName}_${stage}"
@@ -23,10 +24,15 @@ export default_init_sql_file="db/init.sql"
 
 
 loadInit () {
-    test -f "${default_init_sql_file}" && note "Database: ${databaseName} will be created and filled using initial sql: db/init.sql" && mysql --socket=${HOME}/SoftwareData/Mysql/service.sock ${databaseName} < "${default_init_sql_file}" && note "Database init complete!" && exit 0
+    while true; do
+        test -f ${database_socket_file} && break
+        note "Waiting for database socket file to show up.."
+        sleep 1
+    done
+    test -f "${default_init_sql_file}" && note "Database: ${databaseName} will be created and filled using initial sql: db/init.sql" && mysql --socket=${database_socket_file} ${databaseName} < "${default_init_sql_file}" && note "Database init complete!" && exit 0
     error "No database SQL init file found!"
 }
 
 note "Invoking bin/build for service: ${serviceName} on stage: ${stage}"
-mysql --socket=${HOME}/SoftwareData/Mysql/service.sock --execute="create database ${databaseName};" && loadInit
+mysql --socket=${database_socket_file} --execute="create database ${databaseName};" && loadInit
 note "Finished bin/build"
